@@ -1,0 +1,29 @@
+{
+  "name": "diploma-middle",
+  "version": "1.0.0",
+  "description": "GloAcademyJS-20",
+  "main": "index.js",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --mode production",
+    "dev": "cross-env NODE_ENV=development webpack --mode development",
+    "start": "cross-env NODE_ENV=development webpack serve --mode development"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [],
+  "author": "Azat Akhmetshin",
+  "license": "ISC",
+  "homepage": "",
+  "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "babel-loader": "^8.2.2",
+    "clean-webpack-plugin": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "webpack": "^5.52.1",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.2.0"
+  }
+}
