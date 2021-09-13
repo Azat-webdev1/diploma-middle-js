@@ -16,13 +16,13 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
-    historyApiFallback: true,
-    contentBase: path.resolve(__dirname, 'dist'),
+    static: {
+      directory: path.join(__dirname, './'),
+    },
     open: true,
     compress: true,
     hot: true,
-    port: 8000,
-    
+    port: 8001,
   },
   devtool: isProd ? false : 'source-map',
   module: {
