@@ -2,7 +2,7 @@ import popup from './modules/popup';
 import scroll from './modules/smoothScroll';
 
 //Модальное окно в шапке
-popup('.header-modal--opened',
+popup(
   '.header-modal',
   'a.btn-warning',
   '.header-modal__close',
@@ -10,7 +10,7 @@ popup('.header-modal--opened',
   );
 
   //Модальное окно в секции
-popup('.services-modal--opened',
+popup(
   '.services-modal',
   'a.btn-success',
   '.services-modal__close',
