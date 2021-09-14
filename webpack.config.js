@@ -8,7 +8,6 @@ const isProd = !isDev;
 const filename = (ext) => isDev ? `bundle.${ext}` : `bundle.${ext}`;
 
 module.exports = {
-  //context: path.resolve(__dirname, 'src'),
   mode: 'development',
   entry:'./src/index.js',
   output: {
@@ -22,7 +21,7 @@ module.exports = {
     open: true,
     compress: true,
     hot: true,
-    port: 8000,
+    port: 8001,
   },
   devtool: isProd ? false : 'source-map',
   module: {
