@@ -22,7 +22,7 @@ module.exports = {
     open: true,
     compress: true,
     hot: true,
-    port: 8001,
+    port: 8000,
   },
   devtool: isProd ? false : 'source-map',
   module: {
