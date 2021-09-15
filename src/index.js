@@ -1,6 +1,8 @@
 import popup from './modules/popup';
 import scroll from './modules/smoothScroll';
 import countTimer from './modules/countTimer';
+import modulSertificate from './modules/modulSertificate';
+
 
 //Модальное окно в шапке
 popup(
@@ -40,3 +42,5 @@ countTimer(
   '.count_4 span'
 );
 
+//Модальное окно cертификаты и документы
+modulSertificate();
