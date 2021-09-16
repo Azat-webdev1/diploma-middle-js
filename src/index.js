@@ -2,7 +2,7 @@ import popup from './modules/popup';
 import scroll from './modules/smoothScroll';
 import countTimer from './modules/countTimer';
 import modulSertificate from './modules/modulSertificate';
-
+import sendForm from './modules/sendForm';
 
 //Модальное окно в шапке
 popup(
@@ -44,3 +44,6 @@ countTimer(
 
 //Модальное окно cертификаты и документы
 modulSertificate();
+
+//Отправка формы
+sendForm();
