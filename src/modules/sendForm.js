@@ -3,6 +3,39 @@ const sendForm = () => {
     loadMessage = 'Загрузка...',
     successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
 
+  const isValid = (e) => {
+    const target = e.target ? e.target : e;
+    const phoneReg = /^[\+ 0-9]{3,16}$/;
+    const nameReg = /^[а-яё a-z]{2,}$/i;
+    
+    if (target.name === 'fio') {
+      if (!nameReg.test(target.value)) {
+        target.classList.remove('success');
+        target.classList.add('error');
+        target.value.trim();
+        return false;
+      }
+    } else {
+      target.classList.remove('error');
+      target.classList.add('success');
+    }
+    if (target.name === 'phone') {
+      if (!phoneReg.test(target.value)) {
+        target.classList.remove('success');
+        target.classList.add('error');
+        target.value.trim();
+        return false;
+      }
+    } else {
+      target.classList.remove('error');
+      target.classList.add('success');
+
+    }
+
+    return true;
+  };
+
+
   const postData = body => fetch('./server.php', {
     method: 'POST',
     headers: {
@@ -13,7 +46,7 @@ const sendForm = () => {
   });
 
   const clearInput = (idForm) => {
-    const formId = document.querySelector(idForm);
+    const formId = idForm;
     [...formId.elements]
     .filter(item =>
         item.tagName.toLowerCase() !== 'button' &&
@@ -31,15 +64,21 @@ const sendForm = () => {
   };
 
   const processingForm = (idForm) => {
-    const formId = document.querySelector(idForm),
+    const formId = idForm, //document.querySelector(idForm),
       statusMessage = document.createElement('div'),
-      formBtns = document.querySelectorAll('.btn-block'),
-      inputs = document.querySelectorAll('input'),
+      formBtns = formId.querySelectorAll('button'),
+      inputs = formId.querySelectorAll('input.form-control'),
       totalCalc = document.querySelector('#calc-total');
-
+    
     statusMessage.classList.add('status-message');
     statusMessage.style.cssText = 'font-size: 2rem; color: #fff;';
+
+    const addMess = document.createElement('div');
+    addMess.classList.add('mess');
+    addMess.style.cssText = 'color: red;';
+    addMess.textContent = 'не верно';
     
+
     const btnSetAttribute = () => {
       formBtns.forEach((el) => {
         el.setAttribute('disabled', true);
@@ -52,48 +91,17 @@ const sendForm = () => {
       });
     };
 
-    const isValid = (e) => {
-      const target = e.target;
-      const phoneReg = /^[\+ 0-9]/;
-      const nameReg = /^[а-яё a-z]{2,}$/i;
-      target.value.trim();
-      if (target.name === 'fio') {
-        if (!nameReg.test(target.value)) {
-          target.classList.remove('success');
-          target.classList.add('error');
-          target.value.trim();
-          target.setCustomValidity('не верное имя');
-        }
-        else {
-          target.classList.remove('error');
-          target.classList.add('success');
-          target.setCustomValidity('');
-        }
-      }
-      if (target.name === 'phone') {
-        if (!phoneReg.test(target.value)) {
-          target.classList.remove('success');
-          target.classList.add('error');
-          target.value.trim();
-          target.setCustomValidity('не верный телефон');
-        }
-        else {
-          target.classList.remove('error');
-          target.classList.add('success');
-          target.setCustomValidity('');
-        }
-      }
-    };
 
     for (let el of inputs) {
-      if (el.tagName !== 'BUTTON' && el.type!== 'hidden') {
+      if (el.tagName !== 'BUTTON' && el.type !== 'hidden') {
         el.setAttribute('required', '');
-        
-        el.addEventListener('change', (e) => {
+
+        el.addEventListener('input', (e) => {
           isValid(e);
+          
         });
 
-        el.addEventListener('blur', (e) => {
+        el.addEventListener('input', (e) => {
           let target = e.target;
           if (target.closest('input[placeholder="Ваше имя*"]') ||
             target.closest('input[placeholder="ваше имя"]') &&
@@ -107,14 +115,13 @@ const sendForm = () => {
           } else {
             btnRemoveAttribute();
           }
-          target.classList.remove('success');
-          
         });
       }
     }
-    
+
     formId.addEventListener('submit', e => {
       e.preventDefault();
+      
       statusMessage.textContent = loadMessage;
       formId.appendChild(statusMessage);
 
@@ -124,7 +131,19 @@ const sendForm = () => {
           formData.append('totalCalc', +totalCalc.value)
         }
       }
-
+      let validTrue = true;
+      inputs.forEach((item) => {
+        if (!isValid(item)) {
+          validTrue = false;
+          statusMessage.style.cssText = `
+            font-size: 2rem;
+            color: red;
+          `;
+          statusMessage.textContent = 'Ошибки в форме';
+          return false;
+        }
+      })
+      if (!validTrue) return false;
       postData(Object.fromEntries(formData))
         .then((response) => {
           if (response.status !== 200) {
@@ -136,6 +155,9 @@ const sendForm = () => {
           `;
           statusMessage.textContent = successMessage;
           removeStatusMessage();
+          setTimeout(() => {
+            addMess.classList.remove('mess');
+          }, 1000);
           clearInput(idForm);
         })
         .catch((error) => {
@@ -150,8 +172,13 @@ const sendForm = () => {
     });
   };
 
+  /*
+  processingForm('#callback form');
+  processingForm('form[name="application-form"]');
   processingForm('form[name="action-form"]');
   processingForm('form[name="action-form2"]');
+  */
+  document.querySelectorAll('form').forEach(item => processingForm(item));
 
 };
 
