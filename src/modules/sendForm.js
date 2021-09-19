@@ -31,15 +31,15 @@ const sendForm = () => {
   };
 
   const processingForm = (idForm) => {
-    const formId = document.querySelector(idForm);
-    const statusMessage = document.createElement('div');
-    const inputs = document.querySelectorAll('input');
-    const formBtns = document.querySelectorAll('.btn-block');
-    
+    const formId = document.querySelector(idForm),
+      statusMessage = document.createElement('div'),
+      formBtns = document.querySelectorAll('.btn-block'),
+      inputs = document.querySelectorAll('input'),
+      totalCalc = document.querySelector('#calc-total');
+
     statusMessage.classList.add('status-message');
-    statusMessage.style.cssText = 'font-size: 2rem; color: #fff';
-
-
+    statusMessage.style.cssText = 'font-size: 2rem; color: #fff;';
+    
     const btnSetAttribute = () => {
       formBtns.forEach((el) => {
         el.setAttribute('disabled', true);
@@ -49,74 +49,83 @@ const sendForm = () => {
     const btnRemoveAttribute = () => {
       formBtns.forEach((el) => {
         el.removeAttribute('disabled');
-
       });
     };
 
-    const inputError = () => {
-      inputs.forEach((el) => {
-        el.classList.add('error');
-      });
-    };
-
-    const delInputError = () => {
-      inputs.forEach((el) => {
-        el.classList.remove('error');
-      });
-    };
-
-    const isValid = e => {
+    const isValid = (e) => {
       const target = e.target;
-      const phoneReg = /^[\+ 0-9]{11,16}$/;
+      const phoneReg = /^[\+ 0-9]/;
       const nameReg = /^[а-яё a-z]{2,}$/i;
-      if (target.name === 'phone') {
-        if (!phoneReg.test(target.value)) {
-          inputError();
-        }
-      }
+      target.value.trim();
       if (target.name === 'fio') {
         if (!nameReg.test(target.value)) {
-          inputError();
+          target.classList.remove('success');
+          target.classList.add('error');
+          target.value.trim();
+          target.setCustomValidity('не верное имя');
+        }
+        else {
+          target.classList.remove('error');
+          target.classList.add('success');
+          target.setCustomValidity('');
+        }
+      }
+      if (target.name === 'phone') {
+        if (!phoneReg.test(target.value)) {
+          target.classList.remove('success');
+          target.classList.add('error');
+          target.value.trim();
+          target.setCustomValidity('не верный телефон');
+        }
+        else {
+          target.classList.remove('error');
+          target.classList.add('success');
+          target.setCustomValidity('');
         }
       }
     };
 
-    inputs.forEach((el) => {
-      el.setAttribute('required', '');
-      el.addEventListener('focus', (e) => {
-        let target = e.target;
-        if (target.closest('.error')) {
-          target.classList.remove('error');
-        }
-      });
+    for (let el of inputs) {
+      if (el.tagName !== 'BUTTON' && el.type!== 'hidden') {
+        el.setAttribute('required', '');
+        
+        el.addEventListener('change', (e) => {
+          isValid(e);
+        });
 
-      el.addEventListener('blur', (e) => {
-        let target = e.target;
-        if (target.closest('input[placeholder="Ваше имя*"]') ||
-          target.closest('input[placeholder="ваше имя"]')) {
-          let text = target.value;
-          text = text[0].toUpperCase() + text.substring(1);
-          target.value = text;
-        }
-        if (target.closest('.error')) {
-          btnSetAttribute();
-        } else {
-          btnRemoveAttribute();
-          if (!target === 'disabled') {
-            target.classList.remove('error');
+        el.addEventListener('blur', (e) => {
+          let target = e.target;
+          if (target.closest('input[placeholder="Ваше имя*"]') ||
+            target.closest('input[placeholder="ваше имя"]') &&
+            target === undefined) {
+            let text = target.value;
+            text = text[0].toUpperCase() + text.substring(1);
+            target.value = text;
           }
-        }
-        isValid(e);
-      });
-
-    });
-
+          if (target.closest('.error')) {
+            btnSetAttribute();
+          } else {
+            btnRemoveAttribute();
+          }
+          target.classList.remove('success');
+          
+        });
+      }
+    }
+    
     formId.addEventListener('submit', e => {
       e.preventDefault();
       statusMessage.textContent = loadMessage;
       formId.appendChild(statusMessage);
 
-      postData(Object.fromEntries(new FormData(formId)))
+      let formData = new FormData(formId);
+      if (totalCalc) {
+        if (+totalCalc.value) {
+          formData.append('totalCalc', +totalCalc.value)
+        }
+      }
+
+      postData(Object.fromEntries(formData))
         .then((response) => {
           if (response.status !== 200) {
             throw new Error('status network not 200');
@@ -138,7 +147,6 @@ const sendForm = () => {
           statusMessage.textContent = errorMessage;
           console.error(error);
         });
-        delInputError();
     });
   };
 
