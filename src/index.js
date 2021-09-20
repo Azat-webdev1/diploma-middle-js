@@ -1,6 +1,11 @@
 import popup from './modules/popup';
 import scroll from './modules/smoothScroll';
 import countTimer from './modules/countTimer';
+import modulSertificate from './modules/modulSertificate';
+import sendForm from './modules/sendForm';
+import slider from './modules/slider';
+import servicesSlider from './modules/servicesSlider';
+import calc from './modules/calc';
 
 //Модальное окно в шапке
 popup(
@@ -39,4 +44,15 @@ countTimer(
   '.count_3 span',
   '.count_4 span'
 );
+//Слайдер карусель
+slider();
+servicesSlider();
 
+//Калькулятор
+calc();
+
+//Модальное окно cертификаты и документы
+modulSertificate();
+
+//Отправка формы
+sendForm();
